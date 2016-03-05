@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>happy birday</title>
+        <script src="phaser.js"></script>
+        <style>
+            canvas {
+                border: 15px solid black;
+            }
+        </style>
+    </head>
+    <body>
+
+    <script type="text/javascript">
+
+    window.onload = function() {
+
+        var game = new Phaser.Game(900, 700, Phaser.AUTO, '', {preload: preload, create: create});
+
+        var emitterBack;
+        var emitterFront;
+
+        function preload () {
+            game.load.image('bird', 'bird.png');
+            game.load.image('textNoGlow', 'text-no-glow.png');
+            game.load.image('textGlow', 'text-glow.png');
+        }
+
+        function create () {
+            game.scale.pageAlignHorizontally = true;
+            game.scale.pageAlignVertically = true;
+            game.scale.refresh();
+
+            game.physics.startSystem(Phaser.Physics.ARCADE);
+            game.stage.backgroundColor = 0xf8238c;
+
+            emitterBack = game.add.emitter(0, 0, 50);
+            emitterBack.minParticleScale = 0.15;
+            emitterBack.maxParticleScale = 0.25;
+            emitterBack.minRotation = 0;
+            emitterBack.maxRotation = 180;
+            emitterBack.minParticleSpeed.set(-500);
+            emitterBack.maxParticleSpeed.set(500);
+            emitterBack.gravity = 0;
+            emitterBack.bounce.setTo(0.5, 0.5);
+            emitterBack.makeParticles('bird', 0, 50, true, true);
+            game.add.tween(emitterBack).to({minParticleScale: 1, maxParticleScale: 1.5}, 4000, "Linear", true, 3000);
+
+            game.input.onDown.add(onClick, null);
+            
+            var textNoGlow = game.add.image(game.width/2, game.height/2, "textNoGlow");
+            textNoGlow.anchor.set(0.5);
+            var textGlow = game.add.image(game.width/2, game.height/2, "textGlow");
+            textGlow.anchor.set(0.5);
+            game.add.tween(textGlow).to({alpha: 0}, 300, "Cubic", true, 0, -1, true);
+
+            emitterFront = game.add.emitter(0, 0, 50);
+            emitterFront.minParticleScale = 0.15;
+            emitterFront.maxParticleScale = 0.25;
+            emitterFront.minRotation = 0;
+            emitterFront.maxRotation = 180;
+            emitterFront.minParticleSpeed.set(-500);
+            emitterFront.maxParticleSpeed.set(500);
+            emitterFront.gravity = 0;
+            emitterFront.bounce.setTo(0.5, 0.5);
+            emitterFront.makeParticles('bird', 0, 50, true, true);
+            game.add.tween(emitterFront).to({minParticleScale: 1, maxParticleScale: 1.5}, 4000, "Linear", true, 3000);
+
+            game.time.events.start(3000);
+            game.time.events.loop(1000, particleBurst, null);
+        }
+
+        function onClick(pointer) {            
+            emitterBack.x = pointer.x;
+            emitterBack.y = pointer.y;
+            emitterBack.start(true, 2000, null, 5);
+
+            emitterFront.x = pointer.x;
+            emitterFront.y = pointer.y;
+            emitterFront.start(true, 2000, null, 5);
+        }
+
+        function particleBurst() {
+            emitterBack.x = game.world.randomX;
+            emitterBack.y = game.world.randomY;
+            emitterBack.start(true, 2000, null, 5);
+
+            emitterFront.x = game.world.randomX;
+            emitterFront.y = game.world.randomY;
+            emitterFront.start(true, 2000, null, 5);
+        }
+
+    };
+
+    </script>
+
+    </body>
+</html>
